@@ -12,10 +12,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 BOT_PREFIX = os.getenv('BOT_PREFIX')
 SOUNDS_PATH = os.getenv('SOUNDS_PATH')
 
-intents = discord.Intents.default()
-intents.members = True
-
-bot = commands.Bot(command_prefix=f'{BOT_PREFIX} ', intents=intents)
+bot = commands.Bot(command_prefix=f'{BOT_PREFIX} ')
 bot.volume = 1.0
 
 queue = []
@@ -88,3 +85,6 @@ async def sound_list(ctx):
         sounds += f'- {file.split(".")[0]}\n'
     sounds += '```'
     await ctx.send(sounds)
+
+print('START')
+bot.run(TOKEN)
