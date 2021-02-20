@@ -12,7 +12,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 BOT_PREFIX = os.getenv('BOT_PREFIX')
 SOUNDS_PATH = os.getenv('SOUNDS_PATH')
 
-bot = commands.Bot(command_prefix=f'{BOT_PREFIX} ')
+bot = commands.Bot(command_prefix=f'{BOT_PREFIX}')
 bot.volume = 1.0
 
 queue = []
@@ -76,10 +76,10 @@ async def sound(ctx, effect):
     except Exception as e:
         print(e)
 
-@bot.command(name='ayuda')
+@bot.command(name='Lista de sonidos', aliases=['l'])
 async def sound_list(ctx):
     sounds = '```Lista de sonidos disponibles:\n'
-    files_path = 'SOUNDS_PATH'
+    files_path = f'{SOUNDS_PATH}/'
     files_directory = os.listdir(files_path)
     for file in sorted(files_directory):
         sounds += f'- {file.split(".")[0]}\n'
