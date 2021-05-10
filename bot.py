@@ -6,15 +6,19 @@ from os import listdir
 from dotenv import load_dotenv
 from os.path import isfile, join
 from discord.ext import commands
+from discord_slash import SlashCommand, SlashContext
+from discord_slash.utils.manage_commands import create_option
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 BOT_PREFIX = os.getenv('BOT_PREFIX')
 SOUNDS_PATH = os.getenv('SOUNDS_PATH')
 
-bot = commands.Bot(command_prefix=f'{BOT_PREFIX}')
+bot = commands.Bot(command_prefix=f'{BOT_PREFIX}', intents=discord.Intents.all())
 bot.volume = 1.0
+slash = SlashCommand(bot, sync_commands=True)
 
+guild_ids = [134687470733230080]
 queue = []
 
 def check_queue(voice_client):
@@ -24,8 +28,13 @@ def check_queue(voice_client):
         voice_client.source = discord.PCMVolumeTransformer(voice_client.source)
         voice_client.source.volume = bot.volume
 
-@bot.command(aliases = ['join'])
-async def join_channel(ctx):
+@slash.slash(
+    name="join",
+    options=[],
+    description="Unirse un canal de voz",
+    guild_ids=guild_ids)
+@bot.command()
+async def join_channel(ctx: SlashContext):
     try:
         channel = ctx.message.author.voice.channel
         await channel.connect()
@@ -33,8 +42,13 @@ async def join_channel(ctx):
         print(e)
         print('Error al conectarse al canal de voz')
 
+@slash.slash(
+    name="leave",
+    options=[],
+    description="Irse de un canal de voz",
+    guild_ids=guild_ids)
 @bot.command()
-async def leave(ctx):
+async def leave(ctx: SlashContext):
     try:
         voice_client = ctx.guild.voice_client
         await voice_client.disconnect()
@@ -42,17 +56,34 @@ async def leave(ctx):
         print(e)
         print('Error al desconectarse del canal de voz')
 
+@slash.slash(
+    name="stop",
+    options=[],
+    description="Finalizar la reproducción",
+    guild_ids=guild_ids)
 @bot.command()
-async def stop(ctx):
+async def stop(ctx: SlashContext):
     if ctx.author.voice and ctx.voice_client:
         vc = ctx.voice_client
         if vc.is_playing():
             queue = []
             vc.stop()
 
+@slash.slash(
+    name="play",
+    description="Reproducir efecto de sonido",
+    options=[
+        create_option(
+            name="value",
+            description="Nombre del sonido",
+            option_type=3,
+            required=True
+        )
+    ],
+    guild_ids=guild_ids)
 @bot.command(aliases=['s'])
-async def sound(ctx, effect):
-    sound_effect = f'{SOUNDS_PATH}/{effect}.mp3'
+async def sound(ctx: SlashContext, value: str):
+    sound_effect = f'{SOUNDS_PATH}/{value}.mp3'
     try:
         if path.exists(sound_effect):
             voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
@@ -76,9 +107,14 @@ async def sound(ctx, effect):
     except Exception as e:
         print(e)
 
+@slash.slash(
+    name="list",
+    options=[],
+    description="Lista de sonidos",
+    guild_ids=guild_ids)
 @bot.command(name='sonidos', aliases=['l'])
-async def sound_list(ctx):
-    files_path = f'{os.getcwd()}/sounds'
+async def sound_list(ctx: SlashContext):
+    files_path = f'{SOUNDS_PATH}/'
     files_directory = os.listdir(files_path)
 
     files = sorted(files_directory)
@@ -132,8 +168,20 @@ async def sound_list(ctx):
             if current != previous_page:
                 await msg.edit(embed=paginated_content[current])
 
+@slash.slash(
+    name="volume",
+    description="Cambiar el volumen",
+    options=[
+        create_option(
+            name="value",
+            description="Número entre 1 y 100",
+            option_type=4,
+            required=True
+        )
+    ],
+    guild_ids=guild_ids)
 @bot.command()
-async def volume(ctx, value):
+async def volume(ctx: SlashContext, value: int):
     try:
         bot.volume = int(value)/100
         await ctx.send(f'El volumen actual es {value}%')
