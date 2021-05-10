@@ -114,7 +114,7 @@ async def sound(ctx: SlashContext, sound_effect: str):
 @slash.slash(
     name="list",
     options=[],
-    description="Listas sonidos disponibles",
+    description="Listar sonidos disponibles",
     guild_ids=guild_ids)
 @bot.command(name='sonidos', aliases=['l'])
 async def sound_list(ctx: SlashContext):
