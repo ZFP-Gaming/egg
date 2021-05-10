@@ -31,12 +31,12 @@ def check_queue(voice_client):
 @slash.slash(
     name="join",
     options=[],
-    description="Unirse un canal de voz",
+    description="Unirse a un canal de voz",
     guild_ids=guild_ids)
 @bot.command()
 async def join_channel(ctx: SlashContext):
     try:
-        channel = ctx.message.author.voice.channel
+        channel = ctx.author.voice.channel
         await channel.connect()
     except Exception as e:
         print(e)
@@ -50,7 +50,7 @@ async def join_channel(ctx: SlashContext):
 @bot.command()
 async def leave(ctx: SlashContext):
     try:
-        voice_client = ctx.guild.voice_client
+        voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
         await voice_client.disconnect()
     except Exception as e:
         print(e)
@@ -63,8 +63,8 @@ async def leave(ctx: SlashContext):
     guild_ids=guild_ids)
 @bot.command()
 async def stop(ctx: SlashContext):
-    if ctx.author.voice and ctx.voice_client:
-        vc = ctx.voice_client
+    if ctx.author.voice:
+        vc = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
         if vc.is_playing():
             queue = []
             vc.stop()
@@ -74,7 +74,7 @@ async def stop(ctx: SlashContext):
     description="Reproducir efecto de sonido",
     options=[
         create_option(
-            name="value",
+            name="sound_effect",
             description="Nombre del sonido",
             option_type=3,
             required=True
@@ -82,16 +82,16 @@ async def stop(ctx: SlashContext):
     ],
     guild_ids=guild_ids)
 @bot.command(aliases=['s'])
-async def sound(ctx: SlashContext, value: str):
-    sound_effect = f'{SOUNDS_PATH}/{value}.mp3'
+async def sound(ctx: SlashContext, sound_effect: str):
+    sound_effect = f'{SOUNDS_PATH}/{sound_effect}.mp3'
     try:
         if path.exists(sound_effect):
             voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
             if not voice_client:
                 channel = ctx.message.author.voice.channel
                 await channel.connect()
-            if ctx.author.voice and ctx.voice_client:
-                vc = ctx.voice_client
+            if ctx.author.voice:
+                vc = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
                 if not vc.is_playing():
                     print('Empty queue, playing...')
                     vc.play(discord.FFmpegPCMAudio(sound_effect), after=lambda x: check_queue(vc))
@@ -110,7 +110,7 @@ async def sound(ctx: SlashContext, value: str):
 @slash.slash(
     name="list",
     options=[],
-    description="Lista de sonidos",
+    description="Listas sonidos disponibles",
     guild_ids=guild_ids)
 @bot.command(name='sonidos', aliases=['l'])
 async def sound_list(ctx: SlashContext):
@@ -173,7 +173,7 @@ async def sound_list(ctx: SlashContext):
     description="Cambiar el volumen",
     options=[
         create_option(
-            name="value",
+            name="amount",
             description="Número entre 1 y 100",
             option_type=4,
             required=True
@@ -181,10 +181,10 @@ async def sound_list(ctx: SlashContext):
     ],
     guild_ids=guild_ids)
 @bot.command()
-async def volume(ctx: SlashContext, value: int):
+async def volume(ctx: SlashContext, amount: int):
     try:
-        bot.volume = int(value)/100
-        await ctx.send(f'El volumen actual es {value}%')
+        bot.volume = int(amount)/100
+        await ctx.send(f'El volumen actual es {amount}%')
     except Exception as e:
         print(e)
         await ctx.send('')
