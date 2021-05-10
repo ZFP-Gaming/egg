@@ -92,7 +92,7 @@ async def sound(ctx: SlashContext, sound_effect: str):
         if path.exists(sound_effect):
             voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
             if not voice_client:
-                channel = ctx.message.author.voice.channel
+                channel = ctx.author.voice.channel
                 await channel.connect()
             if ctx.author.voice:
                 vc = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
