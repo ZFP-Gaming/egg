@@ -35,6 +35,7 @@ def check_queue(voice_client):
     guild_ids=guild_ids)
 @bot.command()
 async def join_channel(ctx: SlashContext):
+    await ctx.send(hidden=True, content="✅")
     try:
         channel = ctx.author.voice.channel
         await channel.connect()
@@ -49,6 +50,7 @@ async def join_channel(ctx: SlashContext):
     guild_ids=guild_ids)
 @bot.command()
 async def leave(ctx: SlashContext):
+    await ctx.send(hidden=True, content="✅")
     try:
         voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
         await voice_client.disconnect()
@@ -63,6 +65,7 @@ async def leave(ctx: SlashContext):
     guild_ids=guild_ids)
 @bot.command()
 async def stop(ctx: SlashContext):
+    await ctx.send(hidden=True, content="✅")
     if ctx.author.voice:
         vc = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
         if vc.is_playing():
@@ -83,6 +86,7 @@ async def stop(ctx: SlashContext):
     guild_ids=guild_ids)
 @bot.command(aliases=['s'])
 async def sound(ctx: SlashContext, sound_effect: str):
+    await ctx.send(hidden=True, content="✅")
     sound_effect = f'{SOUNDS_PATH}/{sound_effect}.mp3'
     try:
         if path.exists(sound_effect):
