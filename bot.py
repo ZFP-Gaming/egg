@@ -31,8 +31,7 @@ def check_queue(voice_client):
 @slash.slash(
     name="join",
     options=[],
-    description="Unirse a un canal de voz",
-    guild_ids=guild_ids)
+    description="Unirse a un canal de voz")
 @bot.command()
 async def join_channel(ctx: SlashContext):
     await ctx.send(hidden=True, content="✅")
@@ -46,8 +45,7 @@ async def join_channel(ctx: SlashContext):
 @slash.slash(
     name="leave",
     options=[],
-    description="Irse de un canal de voz",
-    guild_ids=guild_ids)
+    description="Irse de un canal de voz")
 @bot.command()
 async def leave(ctx: SlashContext):
     await ctx.send(hidden=True, content="✅")
@@ -61,8 +59,7 @@ async def leave(ctx: SlashContext):
 @slash.slash(
     name="stop",
     options=[],
-    description="Finalizar la reproducción",
-    guild_ids=guild_ids)
+    description="Finalizar la reproducción")
 @bot.command()
 async def stop(ctx: SlashContext):
     await ctx.send(hidden=True, content="✅")
@@ -82,8 +79,7 @@ async def stop(ctx: SlashContext):
             option_type=3,
             required=True
         )
-    ],
-    guild_ids=guild_ids)
+    ])
 @bot.command(aliases=['s'])
 async def sound(ctx: SlashContext, sound_effect: str):
     await ctx.send(hidden=True, content="✅")
@@ -114,8 +110,7 @@ async def sound(ctx: SlashContext, sound_effect: str):
 @slash.slash(
     name="list",
     options=[],
-    description="Listar sonidos disponibles",
-    guild_ids=guild_ids)
+    description="Listar sonidos disponibles")
 @bot.command(name='sonidos', aliases=['l'])
 async def sound_list(ctx: SlashContext):
     files_path = f'{SOUNDS_PATH}/'
@@ -182,8 +177,7 @@ async def sound_list(ctx: SlashContext):
             option_type=4,
             required=True
         )
-    ],
-    guild_ids=guild_ids)
+    ])
 @bot.command()
 async def volume(ctx: SlashContext, amount: int):
     try:
