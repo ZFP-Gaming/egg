@@ -70,7 +70,7 @@ async def stop(ctx: SlashContext):
             vc.stop()
 
 @slash.slash(
-    name="play",
+    name="s",
     description="Reproducir efecto de sonido",
     options=[
         create_option(
