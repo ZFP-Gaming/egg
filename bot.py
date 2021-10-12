@@ -187,5 +187,18 @@ async def volume(ctx: SlashContext, amount: int):
         print(e)
         await ctx.send('')
 
+@bot.event
+async def on_voice_state_update(member, before, after):
+    try:
+        voice_client = discord.utils.get(bot.voice_clients, guild=member.guild)
+
+        if voice_client and voice_client.channel == before.channel:
+            connected_users = voice_client.channel.members
+            if len(connected_users) == 1 and connected_users[0].bot:
+                print('Voice channel empty, leaving...')
+                await voice_client.disconnect()
+    except Exception as e:
+        print(e)
+
 print('START')
 bot.run(TOKEN)
