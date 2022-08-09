@@ -22,7 +22,7 @@ db = MongoClient(MONGO_URL)
 intros = db.bot.intros
 
 bot = commands.Bot(command_prefix=f'{BOT_PREFIX}', intents=discord.Intents.all())
-bot.volume = 1.0
+bot.volume = 0.6
 slash = SlashCommand(bot, sync_commands=True)
 
 guild_ids = [134687470733230080]
