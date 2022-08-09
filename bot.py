@@ -118,7 +118,6 @@ async def on_voice_state_update(member, before, after):
 @bot.command(aliases=['s'])
 async def sound(ctx: SlashContext, sound_effect: str):
     await ctx.send(hidden=True, content="✅")
-    sound_effect = f'{SOUNDS_PATH}/{sound_effect}.mp3'
     sound_effect = list(glob.glob(f'{SOUNDS_PATH}/{sound_effect}*.mp3'))[0]
     try:
         if path.exists(sound_effect):
@@ -222,19 +221,6 @@ async def volume(ctx: SlashContext, amount: int):
     except Exception as e:
         print(e)
         await ctx.send('')
-
-@bot.event
-async def on_voice_state_update(member, before, after):
-    try:
-        voice_client = discord.utils.get(bot.voice_clients, guild=member.guild)
-
-        if voice_client and voice_client.channel == before.channel:
-            connected_users = voice_client.channel.members
-            if len(connected_users) == 1 and connected_users[0].bot:
-                print('Voice channel empty, leaving...')
-                await voice_client.disconnect()
-    except Exception as e:
-        print(e)
 
 print('START')
 bot.run(TOKEN)
