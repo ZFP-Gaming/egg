@@ -7,3 +7,15 @@ services:
     command: "python bot.py"
     env_file: .env
     tty: true
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+  db:
+    image: mongo:latest
+    logging:
+      driver: none
+    ports:
+      - 27017:27017
+    volumes:
+      - ./tmp/mongodb_data:/data/db
