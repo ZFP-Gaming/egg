@@ -96,8 +96,7 @@ async def on_voice_state_update(member, before, after):
             if voice_client and voice_client.channel == after.channel:
                 id = member.id
                 data = intros.find_one({'id': id})
-                print("user has intro")
-                sound_effect = f'{SOUNDS_PATH}/{sound_effect}.mp3'
+                sound_effect = f'{SOUNDS_PATH}/{data["effect"]}.mp3'
                 if data and data['effect'] != '' and path.exists(sound_effect):
                     voice_client.play(discord.FFmpegPCMAudio(sound_effect))
                     voice_client.source = discord.PCMVolumeTransformer(voice_client.source)
