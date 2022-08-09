@@ -92,12 +92,14 @@ async def stop(ctx: SlashContext):
 async def on_voice_state_update(member, before, after):
     try:
         voice_client = discord.utils.get(bot.voice_clients, guild=member.guild)
+        print(member)
         if member.id:
             return
         if before.channel is None and after.channel is not None and member.bot == False:
             if voice_client and voice_client.channel == after.channel:
                 id = member.id
                 data = intros.find_one({'id': id})
+                print("user has intro")
                 sound_effect = f'{SOUNDS_PATH}/{sound_effect}.mp3'
                 if data and data['effect'] != '' and path.exists(sound_effect):
                     voice_client.play(discord.FFmpegPCMAudio(sound_effect))
