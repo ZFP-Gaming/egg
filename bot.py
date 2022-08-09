@@ -92,9 +92,6 @@ async def stop(ctx: SlashContext):
 async def on_voice_state_update(member, before, after):
     try:
         voice_client = discord.utils.get(bot.voice_clients, guild=member.guild)
-        print(member)
-        if member.id:
-            return
         if before.channel is None and after.channel is not None and member.bot == False:
             if voice_client and voice_client.channel == after.channel:
                 id = member.id
