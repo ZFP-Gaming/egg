@@ -111,7 +111,7 @@ async def on_voice_state_update(member, before, after):
     except Exception as e:
         print(e)
 
-@bot.command(aliases=['s'])
+@bot.command()
 async def sound(ctx: SlashContext, sound_effect: str):
     await ctx.send(hidden=True, content="✅")
     sound_path = list(glob.glob(f'{SOUNDS_PATH}/{sound_effect}*.mp3'))[0]
