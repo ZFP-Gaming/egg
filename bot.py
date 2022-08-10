@@ -81,7 +81,7 @@ async def stop(ctx: SlashContext):
     description="Reproducir efecto de sonido",
     options=[
         create_option(
-            name="sound_effect",
+            name="sound",
             description="Nombre del sonido",
             option_type=3,
             required=True
@@ -112,12 +112,12 @@ async def on_voice_state_update(member, before, after):
         print(e)
 
 @bot.command()
-async def sound(ctx: SlashContext, sound_effect: str):
+async def sound(ctx: SlashContext, sound: str):
     await ctx.send(hidden=True, content="✅")
-    sound_path = list(glob.glob(f'{SOUNDS_PATH}/{sound_effect}*.mp3'))[0]
-    print(f'playing {sound_path}')
+    sound_effect = list(glob.glob(f'{SOUNDS_PATH}/{sound}*.mp3'))[0]
+    print(f'playing {sound_effect}')
     try:
-        if path.exists(sound_path):
+        if path.exists(sound_effect):
             voice_client = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
             if not voice_client:
                 channel = ctx.author.voice.channel
@@ -126,12 +126,12 @@ async def sound(ctx: SlashContext, sound_effect: str):
                 vc = discord.utils.get(ctx.bot.voice_clients, guild=ctx.guild)
                 if not vc.is_playing():
                     print('Empty queue, playing...')
-                    vc.play(discord.FFmpegPCMAudio(sound_path), after=lambda x: check_queue(vc))
+                    vc.play(discord.FFmpegPCMAudio(sound_effect), after=lambda x: check_queue(vc))
                     vc.source = discord.PCMVolumeTransformer(vc.source)
                     vc.source.volume = bot.volume
                 else:
-                    print(f'Added to queue: {sound_path}')
-                    queue.append(sound_path)
+                    print(f'Added to queue: {sound_effect}')
+                    queue.append(sound_effect)
             else:
                 await ctx.send('No estás conectado a un canal de audio')
         else:
