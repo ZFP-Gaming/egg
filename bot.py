@@ -87,30 +87,6 @@ async def stop(ctx: SlashContext):
             required=True
         )
     ])
-
-@bot.event
-async def on_voice_state_update(member, before, after):
-    try:
-        voice_client = discord.utils.get(bot.voice_clients, guild=member.guild)
-        if before.channel is None and after.channel is not None and member.bot == False:
-            if voice_client and voice_client.channel == after.channel:
-                id = member.id
-                data = intros.find_one({'id': id})
-                sound_effect = f'{SOUNDS_PATH}/{data["effect"]}.mp3'
-                if data and data['effect'] != '' and path.exists(sound_effect):
-                    voice_client.play(discord.FFmpegPCMAudio(sound_effect))
-                    voice_client.source = discord.PCMVolumeTransformer(voice_client.source)
-                    voice_client.source.volume = bot.volume
-                else:
-                    print(f'{member.name} no tiene un sonido registrado')
-        if voice_client and voice_client.channel == before.channel:
-            connected_users = voice_client.channel.members
-            if len(connected_users) == 1 and connected_users[0].bot:
-                print('Voice channel empty, leaving...')
-                await voice_client.disconnect()
-    except Exception as e:
-        print(e)
-
 @bot.command()
 async def sound(ctx: SlashContext, sound: str):
     await ctx.send(hidden=True, content="✅")
@@ -218,6 +194,29 @@ async def volume(ctx: SlashContext, amount: int):
     except Exception as e:
         print(e)
         await ctx.send('')
+
+@bot.event
+async def on_voice_state_update(member, before, after):
+    try:
+        voice_client = discord.utils.get(bot.voice_clients, guild=member.guild)
+        if before.channel is None and after.channel is not None and member.bot == False:
+            if voice_client and voice_client.channel == after.channel:
+                id = member.id
+                data = intros.find_one({'id': id})
+                sound_effect = f'{SOUNDS_PATH}/{data["effect"]}.mp3'
+                if data and data['effect'] != '' and path.exists(sound_effect):
+                    voice_client.play(discord.FFmpegPCMAudio(sound_effect))
+                    voice_client.source = discord.PCMVolumeTransformer(voice_client.source)
+                    voice_client.source.volume = bot.volume
+                else:
+                    print(f'{member.name} no tiene un sonido registrado')
+        if voice_client and voice_client.channel == before.channel:
+            connected_users = voice_client.channel.members
+            if len(connected_users) == 1 and connected_users[0].bot:
+                print('Voice channel empty, leaving...')
+                await voice_client.disconnect()
+    except Exception as e:
+        print(e)
 
 print('START')
 bot.run(TOKEN)
